@@ -1,16 +1,16 @@
 use std::f64::consts::TAU;
 
-use crate::math::Vec2;
+use crate::math::Point2;
 
 pub struct Camera {
-    position: Vec2,
+    position: Point2,
     speed: f64,
     yaw: f64,
     rotation_speed: f64,
 }
 
 impl Camera {
-    pub fn new(position: Vec2, speed: f64, yaw: f64, rotation_speed: f64) -> Self {
+    pub fn new(position: Point2, speed: f64, yaw: f64, rotation_speed: f64) -> Self {
         Self {
             position,
             speed,
@@ -19,7 +19,7 @@ impl Camera {
         }
     }
 
-    pub fn position(&self) -> Vec2 {
+    pub fn position(&self) -> Point2 {
         self.position
     }
 

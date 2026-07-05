@@ -1,4 +1,11 @@
-use crate::{camera::Camera, engine::timer::FrameTimer, prelude::*};
+use crate::{
+    camera::Camera,
+    engine::timer::FrameTimer,
+    math::{Point2, Vec2},
+    prelude::*,
+    ray::Ray,
+    world::World,
+};
 
 use anyhow::Result;
 use std::sync::Arc;
@@ -45,6 +52,8 @@ impl GameWindow {
 
         let mut timer = FrameTimer::new();
 
+        let world = World::new(MAP);
+
         #[allow(deprecated)]
         let res = self
             .event_loop
@@ -59,6 +68,12 @@ impl GameWindow {
 
                     if event == WindowEvent::RedrawRequested {
                         timer.register_frame();
+                        let mut ray = Ray::new(camera.position(), Vec2::new(0.0, 1.0));
+                        if world.hit(&mut ray) {
+                            println!("Hit")
+                        } else {
+                            println!("Missed")
+                        }
                     }
                 }
                 Event::AboutToWait => {
@@ -98,7 +113,7 @@ impl GameWindow {
                             }
                         }
 
-                        println!("window pos: {:?}", camera.position());
+                        // println!("window pos: {:?}", camera.position());
 
                         timer.step();
                     }

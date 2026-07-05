@@ -5,7 +5,7 @@ use anyhow::Result;
 use crate::{
     camera::Camera,
     engine::window::GameWindow,
-    math::Vec2,
+    math::Point2,
     prelude::{MOVEMENT_SPEED, ROTATION_SPEED},
 };
 
@@ -17,7 +17,7 @@ pub struct Engine {
 impl Engine {
     pub fn new() -> Result<Self> {
         let camera = Camera::new(
-            Vec2::new(0.0, 0.0), // initial position
+            Point2::new(0.0, 0.0), // initial position
             MOVEMENT_SPEED,
             PI / 2.0, // looking at +Y
             ROTATION_SPEED,

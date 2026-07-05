@@ -8,6 +8,8 @@ mod camera;
 mod engine;
 mod math;
 mod prelude;
+mod ray;
+mod world;
 
 fn main() -> Result<()> {
     let mut engine = Engine::new()?;
