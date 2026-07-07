@@ -64,8 +64,16 @@ impl World {
             1.0 / ray.dir().y.abs()
         };
 
-        let mut side_dist_x = (map_x + step_x) as f64 - ray.origin().x;
-        let mut side_dist_y = (map_y + step_y) as f64 - ray.origin().y;
+        let mut side_dist_x = if step_x > 0 {
+            (map_x as f64 + 1.0) - ray.origin().x
+        } else {
+            ray.origin().x - map_x as f64
+        };
+        let mut side_dist_y = if step_y > 0 {
+            (map_y as f64 + 1.0) - ray.origin().y
+        } else {
+            ray.origin().y - map_y as f64
+        };
 
         side_dist_x = if ray.dir().x == 0.0 {
             INFINITY

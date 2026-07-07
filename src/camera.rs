@@ -36,8 +36,8 @@ impl Camera {
     }
 
     pub fn strafe_right(&mut self, dt: f64) {
-        self.position.x += self.yaw.sin() * self.speed * dt;
-        self.position.y -= self.yaw.cos() * self.speed * dt;
+        self.position.x -= self.yaw.sin() * self.speed * dt;
+        self.position.y += self.yaw.cos() * self.speed * dt;
     }
 
     pub fn move_backward(&mut self, dt: f64) {
@@ -46,8 +46,8 @@ impl Camera {
     }
 
     pub fn strafe_left(&mut self, dt: f64) {
-        self.position.x -= self.yaw.sin() * self.speed * dt;
-        self.position.y += self.yaw.cos() * self.speed * dt;
+        self.position.x += self.yaw.sin() * self.speed * dt;
+        self.position.y -= self.yaw.cos() * self.speed * dt;
     }
 
     // used only for mouse move
