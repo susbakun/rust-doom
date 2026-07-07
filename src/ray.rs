@@ -7,6 +7,9 @@ pub struct Ray {
 
 impl Ray {
     pub fn new(origin: Point2, dir: Vec2) -> Self {
+        // normalize the direction before storing it
+        let dir = dir.normalize();
+
         Self { origin, dir }
     }
 

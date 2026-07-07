@@ -1,56 +1,120 @@
-use crate::{math::Point2, ray::Ray};
+use std::f64::INFINITY;
+
+use crate::{
+    hitrecord::{HitRecord, Side},
+    math::Point2,
+    ray::Ray,
+};
+
+struct MapItem {
+    item: char,
+    coordinate: Point2,
+}
+
+impl MapItem {
+    fn new(item: char, coordinate: Point2) -> Self {
+        Self { item, coordinate }
+    }
+}
 
 pub struct World {
-    map: String,
-    player_pos: Point2,
-    walls: Vec<Point2>,
+    map: Vec<Vec<MapItem>>,
+    width: usize,
+    height: usize,
 }
 
 impl World {
     pub fn new(map: &str) -> Self {
-        let mut player_pos = Point2::new(0.0, 0.0);
-        let mut walls = vec![];
+        let width = map.lines().next().map(|l| l.len()).unwrap_or(0);
+        let height = map.lines().count();
+
+        let mut world_map = vec![];
 
         for (l_index, line) in map.lines().enumerate() {
+            let mut items = vec![];
             for (i_index, item) in line.char_indices() {
-                if item == '#' {
-                    walls.push(Point2::new(
-                        (i_index as isize - 4) as f64,
-                        (l_index as isize - 3) as f64,
-                    ));
-                } else if item == 'P' {
-                    player_pos =
-                        Point2::new((i_index as isize - 4) as f64, (l_index as isize - 3) as f64);
-                }
+                let map_item = MapItem::new(item, Point2::new(i_index as f64, l_index as f64));
+                items.push(map_item);
             }
+            world_map.push(items);
         }
 
         Self {
-            map: map.to_string(),
-            player_pos,
-            walls,
+            map: world_map,
+            width,
+            height,
         }
     }
 
-    pub fn hit(&self, ray: &mut Ray) -> bool {
-        let mut t = 0.0;
-        let n = self.map.lines().count() as f64;
+    pub fn hit(&self, ray: &Ray, rec: &mut HitRecord) -> bool {
+        let mut map_x = ray.origin().x.floor() as isize;
+        let mut map_y = ray.origin().y.floor() as isize;
+
+        let step_x = if ray.dir().x >= 0.0 { 1 } else { -1 };
+        let step_y = if ray.dir().y >= 0.0 { 1 } else { -1 };
+
+        let delta_dist_x = if ray.dir().x == 0.0 {
+            INFINITY
+        } else {
+            1.0 / ray.dir().x.abs()
+        };
+        let delta_dist_y = if ray.dir().y == 0.0 {
+            INFINITY
+        } else {
+            1.0 / ray.dir().y.abs()
+        };
+
+        let mut side_dist_x = (map_x + step_x) as f64 - ray.origin().x;
+        let mut side_dist_y = (map_y + step_y) as f64 - ray.origin().y;
+
+        side_dist_x = if ray.dir().x == 0.0 {
+            INFINITY
+        } else {
+            side_dist_x / ray.dir().x.abs()
+        };
+
+        side_dist_y = if ray.dir().y == 0.0 {
+            INFINITY
+        } else {
+            side_dist_y / ray.dir().y.abs()
+        };
 
         loop {
-            if t >= n {
+            let point = Point2::new(map_x as f64, map_y as f64);
+            if !self.in_range(point) {
                 return false;
             }
 
-            let p = ray.origin() + (ray.dir() * t);
+            if self.is_wall(point) {
+                rec.pos = point;
 
-            for wall in &self.walls {
-                if wall.x == p.x && wall.y == p.y {
-                    println!("wall: {wall:?}, distance: {}", wall.distance(ray.origin()));
-                    return true;
-                }
+                rec.distance = match rec.side {
+                    Side::X => side_dist_x - delta_dist_x,
+                    Side::Y => side_dist_y - delta_dist_y,
+                };
+
+                return true;
             }
 
-            t += 1.0;
+            if side_dist_x <= side_dist_y {
+                map_x += step_x;
+                side_dist_x += delta_dist_x;
+                rec.side = Side::X;
+            } else {
+                map_y += step_y;
+                side_dist_y += delta_dist_y;
+                rec.side = Side::Y;
+            }
         }
+    }
+
+    fn in_range(&self, point: Point2) -> bool {
+        (point.x >= 0.0 && point.x < self.width as f64)
+            && (point.y >= 0.0 && point.y < self.height as f64)
+    }
+
+    fn is_wall(&self, point: Point2) -> bool {
+        let (x, y) = (point.x as usize, point.y as usize);
+        self.map[y][x].item == '#'
     }
 }

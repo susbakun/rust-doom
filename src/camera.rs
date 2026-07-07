@@ -1,6 +1,6 @@
 use std::f64::consts::TAU;
 
-use crate::math::Point2;
+use crate::math::{Point2, Vec2};
 
 pub struct Camera {
     position: Point2,
@@ -21,6 +21,13 @@ impl Camera {
 
     pub fn position(&self) -> Point2 {
         self.position
+    }
+
+    pub fn get_front(&self) -> Vec2 {
+        let x = self.yaw.cos();
+        let y = self.yaw.sin();
+
+        Vec2 { x, y }
     }
 
     pub fn move_forward(&mut self, dt: f64) {

@@ -6,6 +6,7 @@ use crate::engine::Engine;
 
 mod camera;
 mod engine;
+mod hitrecord;
 mod math;
 mod prelude;
 mod ray;

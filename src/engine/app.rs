@@ -9,15 +9,15 @@ use crate::{
     prelude::{MOVEMENT_SPEED, ROTATION_SPEED},
 };
 
-pub struct Engine {
+pub struct Engine<'a> {
     camera: Camera,
-    game_window: GameWindow,
+    game_window: GameWindow<'a>,
 }
 
-impl Engine {
+impl<'a> Engine<'a> {
     pub fn new() -> Result<Self> {
         let camera = Camera::new(
-            Point2::new(0.0, 0.0), // initial position
+            Point2::new(4.5, 3.5), // initial position
             MOVEMENT_SPEED,
             PI / 2.0, // looking at +Y
             ROTATION_SPEED,

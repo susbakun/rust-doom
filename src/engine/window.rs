@@ -1,13 +1,12 @@
 use crate::{
     camera::Camera,
-    engine::timer::FrameTimer,
-    math::{Point2, Vec2},
+    engine::{renderer::render, timer::FrameTimer},
     prelude::*,
-    ray::Ray,
     world::World,
 };
 
 use anyhow::Result;
+use pixels::{Pixels, SurfaceTexture, wgpu::Color};
 use std::sync::Arc;
 use winit::{
     dpi::LogicalSize,
@@ -18,12 +17,13 @@ use winit::{
 };
 use winit_input_helper::WinitInputHelper;
 
-pub struct GameWindow {
+pub struct GameWindow<'a> {
     window: Arc<Window>,
     event_loop: Option<EventLoop<()>>,
+    pixels: Pixels<'a>,
 }
 
-impl GameWindow {
+impl<'a> GameWindow<'a> {
     pub fn new() -> Result<Self> {
         let event_loop = EventLoop::new()?;
         let window = {
@@ -39,9 +39,14 @@ impl GameWindow {
             )
         };
 
+        let size = window.inner_size();
+        let surface_texture = SurfaceTexture::new(size.width, size.height, window.clone());
+        let pixels = Pixels::new(WIDTH, HEIGHT, surface_texture)?;
+
         Ok(Self {
             window,
             event_loop: Some(event_loop),
+            pixels,
         })
     }
 
@@ -62,17 +67,16 @@ impl GameWindow {
             .run(|event, elwt| match event {
                 Event::NewEvents(_) => input.step(),
                 Event::WindowEvent { event, .. } => {
-                    if input.process_window_event(&event) {
-                        //
-                    }
+                    input.process_window_event(&event);
 
                     if event == WindowEvent::RedrawRequested {
                         timer.register_frame();
-                        let mut ray = Ray::new(camera.position(), Vec2::new(0.0, 1.0));
-                        if world.hit(&mut ray) {
-                            println!("Hit")
-                        } else {
-                            println!("Missed")
+
+                        let frame = self.pixels.frame_mut();
+                        render(&world, camera, frame);
+                        match self.pixels.render() {
+                            Err(err) => panic!("failed to render scene: {err}"),
+                            _ => (),
                         }
                     }
                 }
