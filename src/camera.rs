@@ -27,7 +27,7 @@ impl Camera {
         let x = self.yaw.cos();
         let y = self.yaw.sin();
 
-        Vec2 { x, y }
+        Vec2 { x, y }.normalize()
     }
 
     pub fn move_forward(&mut self, dt: f64) {

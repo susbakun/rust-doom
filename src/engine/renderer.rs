@@ -22,8 +22,12 @@ pub fn render(world: &World, camera: &Camera, frame: &mut [u8]) {
         let ray = Ray::new(camera.position(), ray_dir);
 
         if world.hit(&ray, &mut rec) {
-            let wall_height = (HEIGHT as f64 / rec.distance) as i32;
-            let wall_height = wall_height.min(HEIGHT as i32);
+            // cos(angle between look direction and ray)
+            let perp_dist = rec.ray_distance * (dir.x * ray.dir().x + dir.y * ray.dir().y);
+            let perp_dist = perp_dist.max(0.0001);
+
+            let wall_height = (HEIGHT as f64 / perp_dist) as i32;
+            let wall_height = wall_height.clamp(1, HEIGHT as i32);
 
             let draw_start = ((HEIGHT as i32 - wall_height) / 2).max(0) as u32;
             let draw_end = ((HEIGHT as i32 + wall_height) / 2).min(HEIGHT as i32) as u32;

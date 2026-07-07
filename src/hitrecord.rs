@@ -10,15 +10,15 @@ pub enum Side {
 #[derive(Default)]
 pub struct HitRecord {
     pub pos: Point2,
-    pub distance: f64,
+    pub ray_distance: f64,
     pub side: Side,
 }
 
 impl HitRecord {
-    pub fn new(pos: Point2, distance: f64) -> Self {
+    pub fn new(pos: Point2, ray_distance: f64) -> Self {
         Self {
             pos,
-            distance,
+            ray_distance,
             side: Side::X,
         }
     }

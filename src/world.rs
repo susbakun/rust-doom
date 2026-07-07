@@ -53,6 +53,8 @@ impl World {
         let step_x = if ray.dir().x >= 0.0 { 1 } else { -1 };
         let step_y = if ray.dir().y >= 0.0 { 1 } else { -1 };
 
+        // I normalize the ray.dir() so 1.0/ray
+        // gives us the deltas
         let delta_dist_x = if ray.dir().x == 0.0 {
             INFINITY
         } else {
@@ -65,26 +67,14 @@ impl World {
         };
 
         let mut side_dist_x = if step_x > 0 {
-            (map_x as f64 + 1.0) - ray.origin().x
+            ((map_x as f64 + 1.0) - ray.origin().x) * delta_dist_x
         } else {
-            ray.origin().x - map_x as f64
+            (ray.origin().x - map_x as f64) * delta_dist_x
         };
         let mut side_dist_y = if step_y > 0 {
-            (map_y as f64 + 1.0) - ray.origin().y
+            ((map_y as f64 + 1.0) - ray.origin().y) * delta_dist_y
         } else {
-            ray.origin().y - map_y as f64
-        };
-
-        side_dist_x = if ray.dir().x == 0.0 {
-            INFINITY
-        } else {
-            side_dist_x / ray.dir().x.abs()
-        };
-
-        side_dist_y = if ray.dir().y == 0.0 {
-            INFINITY
-        } else {
-            side_dist_y / ray.dir().y.abs()
+            (ray.origin().y - map_y as f64) * delta_dist_y
         };
 
         loop {

@@ -6,7 +6,7 @@ use crate::{
 };
 
 use anyhow::Result;
-use pixels::{Pixels, SurfaceTexture, wgpu::Color};
+use pixels::{Pixels, SurfaceTexture};
 use std::sync::Arc;
 use winit::{
     dpi::LogicalSize,
