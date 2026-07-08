@@ -11,6 +11,7 @@ mod hitrecord;
 mod math;
 mod prelude;
 mod ray;
+mod texture;
 mod world;
 
 fn main() -> Result<()> {

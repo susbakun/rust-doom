@@ -2,6 +2,7 @@ use crate::{
     camera::Camera,
     engine::{renderer::render, timer::FrameTimer},
     prelude::*,
+    texture::Texture,
     world::World,
 };
 
@@ -26,6 +27,7 @@ pub struct GameWindow<'a> {
 impl<'a> GameWindow<'a> {
     pub fn new() -> Result<Self> {
         let event_loop = EventLoop::new()?;
+
         let window = {
             let size = LogicalSize::new(WIDTH as f64, HEIGHT as f64);
             #[allow(deprecated)]
@@ -59,6 +61,8 @@ impl<'a> GameWindow<'a> {
 
         let world = World::new(MAP);
 
+        let texture = Texture::new("redbrick.png")?;
+
         #[allow(deprecated)]
         let res = self
             .event_loop
@@ -73,7 +77,7 @@ impl<'a> GameWindow<'a> {
                         timer.register_frame();
 
                         let frame = self.pixels.frame_mut();
-                        render(&world, camera, frame);
+                        render(&world, camera, &texture, frame);
                         match self.pixels.render() {
                             Err(err) => panic!("failed to render scene: {err}"),
                             _ => (),

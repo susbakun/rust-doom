@@ -3,12 +3,13 @@ use crate::{
     color::Color,
     hitrecord::{HitRecord, Side},
     math::Vec2,
-    prelude::{HEIGHT, WIDTH},
+    prelude::{HEIGHT, TEX_HEIGHT, TEX_WIDTH, WIDTH},
     ray::Ray,
+    texture::Texture,
     world::World,
 };
 
-pub fn render(world: &World, camera: &Camera, frame: &mut [u8]) {
+pub fn render(world: &World, camera: &Camera, texture: &Texture, frame: &mut [u8]) {
     // clearing the buffer
     frame.fill(0);
 
@@ -33,19 +34,55 @@ pub fn render(world: &World, camera: &Camera, frame: &mut [u8]) {
             let draw_start = ((HEIGHT as i32 - wall_height) / 2).max(0) as u32;
             let draw_end = ((HEIGHT as i32 + wall_height) / 2).min(HEIGHT as i32) as u32;
 
-            let color = match rec.side {
-                Side::X => Color::new(0, 0, 255, 255),
-                Side::Y => Color::new(255, 0, 0, 255),
+            // texture
+            let mut wallx = match rec.side {
+                Side::X => ray.origin().y + perp_dist * ray_dir.y,
+                Side::Y => ray.origin().x + perp_dist * ray_dir.x,
             };
+            wallx -= wallx.floor();
+
+            let mut tex_x = (wallx * TEX_WIDTH as f64) as usize;
+
+            if rec.side == Side::X && ray_dir.x > 0.0 {
+                tex_x = TEX_WIDTH - tex_x - 1;
+            }
+            if rec.side == Side::Y && ray_dir.y < 0.0 {
+                tex_x = TEX_WIDTH - tex_x - 1;
+            }
+
+            let step = 1.0 * TEX_HEIGHT as f64 / wall_height as f64;
+            let mut tex_pos = 0.0;
 
             for y in draw_start..draw_end {
-                let index = (((y * WIDTH) + x) * 4) as usize;
+                let tex_y = tex_pos as usize;
+                let tex_index = (TEX_HEIGHT * tex_y + tex_x) * 4;
+                tex_pos += step;
 
-                frame[index] = color.r;
-                frame[index + 1] = color.g;
-                frame[index + 2] = color.b;
-                frame[index + 3] = color.a;
+                let frame_index = (((y * WIDTH) + x) * 4) as usize;
+
+                let color = get_color(&texture.colors, tex_index, &rec.side);
+
+                frame[frame_index] = color.r;
+                frame[frame_index + 1] = color.g;
+                frame[frame_index + 2] = color.b;
+                frame[frame_index + 3] = color.a;
             }
         }
     }
+}
+
+fn get_color(texture_colors: &Vec<u8>, tex_index: usize, side: &Side) -> Color {
+    let mut r = texture_colors[tex_index];
+    let mut g = texture_colors[tex_index + 1];
+    let mut b = texture_colors[tex_index + 2];
+    let mut a = texture_colors[tex_index + 3];
+
+    if *side == Side::Y {
+        r /= 2;
+        g /= 2;
+        b /= 2;
+        a /= 2;
+    }
+
+    Color { r, g, b, a }
 }
