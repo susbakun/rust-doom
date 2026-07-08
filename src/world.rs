@@ -86,7 +86,7 @@ impl World {
             if self.is_wall(point) {
                 rec.pos = point;
 
-                rec.distance = match rec.side {
+                rec.ray_distance = match rec.side {
                     Side::X => side_dist_x - delta_dist_x,
                     Side::Y => side_dist_y - delta_dist_y,
                 };

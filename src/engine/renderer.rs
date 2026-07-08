@@ -1,6 +1,7 @@
 use crate::{
     camera::Camera,
-    hitrecord::HitRecord,
+    color::Color,
+    hitrecord::{HitRecord, Side},
     math::Vec2,
     prelude::{HEIGHT, WIDTH},
     ray::Ray,
@@ -32,13 +33,18 @@ pub fn render(world: &World, camera: &Camera, frame: &mut [u8]) {
             let draw_start = ((HEIGHT as i32 - wall_height) / 2).max(0) as u32;
             let draw_end = ((HEIGHT as i32 + wall_height) / 2).min(HEIGHT as i32) as u32;
 
+            let color = match rec.side {
+                Side::X => Color::new(0, 0, 255, 255),
+                Side::Y => Color::new(255, 0, 0, 255),
+            };
+
             for y in draw_start..draw_end {
                 let index = (((y * WIDTH) + x) * 4) as usize;
 
-                frame[index] = 255;
-                frame[index + 1] = 255;
-                frame[index + 2] = 255;
-                frame[index + 3] = 255;
+                frame[index] = color.r;
+                frame[index + 1] = color.g;
+                frame[index + 2] = color.b;
+                frame[index + 3] = color.a;
             }
         }
     }

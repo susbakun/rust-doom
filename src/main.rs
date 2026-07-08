@@ -5,6 +5,7 @@ use anyhow::Result;
 use crate::engine::Engine;
 
 mod camera;
+mod color;
 mod engine;
 mod hitrecord;
 mod math;
