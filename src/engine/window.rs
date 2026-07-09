@@ -61,7 +61,7 @@ impl<'a> GameWindow<'a> {
 
         let world = World::new(MAP);
 
-        let texture = Texture::new("redbrick.png")?;
+        let texture = Texture::new("eagle.png")?;
 
         #[allow(deprecated)]
         let res = self

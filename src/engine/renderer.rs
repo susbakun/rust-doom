@@ -34,7 +34,7 @@ pub fn render(world: &World, camera: &Camera, texture: &Texture, frame: &mut [u8
             let draw_start = ((HEIGHT as i32 - wall_height) / 2).max(0) as u32;
             let draw_end = ((HEIGHT as i32 + wall_height) / 2).min(HEIGHT as i32) as u32;
 
-            // texture
+            // finding texture coordinates
             let mut wallx = match rec.side {
                 Side::X => ray.origin().y + perp_dist * ray_dir.y,
                 Side::Y => ray.origin().x + perp_dist * ray_dir.x,
@@ -60,7 +60,7 @@ pub fn render(world: &World, camera: &Camera, texture: &Texture, frame: &mut [u8
 
                 let frame_index = (((y * WIDTH) + x) * 4) as usize;
 
-                let color = get_color(&texture.colors, tex_index, &rec.side);
+                let color = get_color(&texture.colors, tex_index, &rec.side, perp_dist);
 
                 frame[frame_index] = color.r;
                 frame[frame_index + 1] = color.g;
@@ -71,18 +71,21 @@ pub fn render(world: &World, camera: &Camera, texture: &Texture, frame: &mut [u8
     }
 }
 
-fn get_color(texture_colors: &Vec<u8>, tex_index: usize, side: &Side) -> Color {
+fn get_color(texture_colors: &Vec<u8>, tex_index: usize, side: &Side, distance: f64) -> Color {
     let mut r = texture_colors[tex_index];
     let mut g = texture_colors[tex_index + 1];
     let mut b = texture_colors[tex_index + 2];
     let mut a = texture_colors[tex_index + 3];
 
+    let mut brightness = 1.0 / (1.0 + distance * 0.1);
+
     if *side == Side::Y {
-        r /= 2;
-        g /= 2;
-        b /= 2;
-        a /= 2;
+        brightness *= 0.5;
     }
+
+    r = (r as f64 * brightness) as u8;
+    g = (g as f64 * brightness) as u8;
+    b = (b as f64 * brightness) as u8;
 
     Color { r, g, b, a }
 }
