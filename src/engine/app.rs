@@ -19,7 +19,8 @@ impl<'a> Engine<'a> {
         let camera = Camera::new(
             Point2::new(4.5, 3.5), // initial position
             MOVEMENT_SPEED,
-            PI / 2.0, // looking at +Y
+            PI / 2.0, // looking at +Y,
+            1.0,
             ROTATION_SPEED,
         );
         let game_window = GameWindow::new()?;

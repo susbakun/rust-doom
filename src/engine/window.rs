@@ -104,21 +104,21 @@ impl<'a> GameWindow<'a> {
 
                         // camera movements
                         if input.key_held(KeyCode::KeyW) {
-                            camera.move_forward(dt);
+                            camera.move_forward(dt, &world);
                         }
                         if input.key_held(KeyCode::KeyS) {
-                            camera.move_backward(dt);
+                            camera.move_backward(dt, &world);
                         }
                         if input.key_held(KeyCode::KeyA) {
                             if input.held_alt() {
-                                camera.strafe_left(dt);
+                                camera.strafe_left(dt, &world);
                             } else {
                                 camera.turn_left(dt);
                             }
                         }
                         if input.key_held(KeyCode::KeyD) {
                             if input.held_alt() {
-                                camera.strafe_right(dt);
+                                camera.strafe_right(dt, &world);
                             } else {
                                 camera.turn_right(dt);
                             }

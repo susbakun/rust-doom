@@ -111,7 +111,7 @@ impl World {
             && (point.y >= 0.0 && point.y < self.height as f64)
     }
 
-    fn is_wall(&self, point: Point2) -> bool {
+    pub fn is_wall(&self, point: Point2) -> bool {
         let (x, y) = (point.x as usize, point.y as usize);
         self.map[y][x].item == '#'
     }
