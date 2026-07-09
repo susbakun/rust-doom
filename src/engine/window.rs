@@ -61,7 +61,10 @@ impl<'a> GameWindow<'a> {
 
         let world = World::new(MAP);
 
-        let texture = Texture::new("eagle.png")?;
+        let wall_texture = Texture::new("eagle.png")?;
+        let floor_texture = Texture::new("wood.png")?;
+
+        let textures = vec![wall_texture, floor_texture];
 
         #[allow(deprecated)]
         let res = self
@@ -77,7 +80,7 @@ impl<'a> GameWindow<'a> {
                         timer.register_frame();
 
                         let frame = self.pixels.frame_mut();
-                        render(&world, camera, &texture, frame);
+                        render(&world, camera, &textures, frame);
                         match self.pixels.render() {
                             Err(err) => panic!("failed to render scene: {err}"),
                             _ => (),
