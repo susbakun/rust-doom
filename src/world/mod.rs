@@ -1,24 +1,16 @@
 use std::f64::INFINITY;
 
+mod tile;
+
 use crate::{
     hitrecord::{HitRecord, Side},
     math::Point2,
     ray::Ray,
+    world::tile::Tile,
 };
 
-struct MapItem {
-    item: char,
-    coordinate: Point2,
-}
-
-impl MapItem {
-    fn new(item: char, coordinate: Point2) -> Self {
-        Self { item, coordinate }
-    }
-}
-
 pub struct World {
-    map: Vec<Vec<MapItem>>,
+    map: Vec<Vec<Tile>>,
     width: usize,
     height: usize,
 }
@@ -30,11 +22,11 @@ impl World {
 
         let mut world_map = vec![];
 
-        for (l_index, line) in map.lines().enumerate() {
+        for line in map.lines() {
             let mut items = vec![];
-            for (i_index, item) in line.char_indices() {
-                let map_item = MapItem::new(item, Point2::new(i_index as f64, l_index as f64));
-                items.push(map_item);
+            for item in line.chars() {
+                let tile = item.into();
+                items.push(tile);
             }
             world_map.push(items);
         }
@@ -113,6 +105,6 @@ impl World {
 
     pub fn is_wall(&self, point: Point2) -> bool {
         let (x, y) = (point.x as usize, point.y as usize);
-        self.map[y][x].item == '#'
+        self.map[y][x] == Tile::Wall
     }
 }
