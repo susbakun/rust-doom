@@ -1,8 +1,8 @@
 use crate::{
+    asset_manager::AssetManager,
     camera::Camera,
     engine::{renderer::render, timer::FrameTimer},
     prelude::*,
-    texture::Texture,
     world::World,
 };
 
@@ -52,19 +52,17 @@ impl<'a> GameWindow<'a> {
         })
     }
 
-    pub fn run_event_loop(&mut self, camera: &mut Camera) -> Result<()> {
+    pub fn run_event_loop(
+        &mut self,
+        camera: &mut Camera,
+        world: &World,
+        asset_manager: &AssetManager,
+    ) -> Result<()> {
         let mut input = WinitInputHelper::new();
 
         println!("DOOM Engine Started");
 
         let mut timer = FrameTimer::new();
-
-        let world = World::new(MAP);
-
-        let wall_texture = Texture::new("eagle.png")?;
-        let floor_texture = Texture::new("wood.png")?;
-
-        let textures = vec![wall_texture, floor_texture];
 
         #[allow(deprecated)]
         let res = self
@@ -80,7 +78,7 @@ impl<'a> GameWindow<'a> {
                         timer.register_frame();
 
                         let frame = self.pixels.frame_mut();
-                        render(&world, camera, &textures, frame);
+                        render(&world, camera, &asset_manager, frame);
                         match self.pixels.render() {
                             Err(err) => panic!("failed to render scene: {err}"),
                             _ => (),

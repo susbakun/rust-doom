@@ -4,6 +4,7 @@ use anyhow::Result;
 
 use crate::engine::Engine;
 
+mod asset_manager;
 mod camera;
 mod color;
 mod engine;

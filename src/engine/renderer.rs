@@ -1,20 +1,21 @@
 use crate::{
+    asset_manager::AssetManager,
     camera::Camera,
     color::Color,
     hitrecord::{HitRecord, Side},
     math::Vec2,
     prelude::{HEIGHT, TEX_HEIGHT, TEX_WIDTH, WIDTH},
     ray::Ray,
-    texture::Texture,
     world::World,
 };
 
-pub fn render(world: &World, camera: &Camera, textures: &Vec<Texture>, frame: &mut [u8]) {
+pub fn render(world: &World, camera: &Camera, asset_manager: &AssetManager, frame: &mut [u8]) {
     let dir = camera.get_front();
     let plane = Vec2::new(-dir.y, dir.x) * 0.66;
 
-    let wall_texture = &textures[0];
-    let floor_texture = &textures[1];
+    let wall_texture = &asset_manager.textures[0];
+    let floor_texture = &asset_manager.textures[1];
+    let ceiling_texture = &asset_manager.textures[2];
 
     let ray_dir_x_0 = dir.x - plane.x;
     let ray_dir_y_0 = dir.y - plane.y;
@@ -50,6 +51,8 @@ pub fn render(world: &World, camera: &Camera, textures: &Vec<Texture>, frame: &m
 
             let frame_index = (((y * WIDTH) + x) * 4) as usize;
             write_to_framebuffer(frame, frame_index, &color);
+
+            let color = get_floor_color(&ceiling_texture.colors, tex_index);
 
             let frame_index = ((((HEIGHT - y - 1) * WIDTH) + x) * 4) as usize;
             write_to_framebuffer(frame, frame_index, &color);
