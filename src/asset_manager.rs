@@ -12,13 +12,24 @@ impl AssetManager {
     }
 
     pub fn load_assets(&mut self) -> Result<()> {
-        let wall_texture = Texture::new("redbrick.png")?;
-        let floor_texture = Texture::new("greystone.png")?;
-        let ceiling_texture = Texture::new("wood.png")?;
+        // loading all of the available textures
+        let eagle = Texture::new("eagle.png")?;
+        let redbrick = Texture::new("redbrick.png")?;
+        let purplestone = Texture::new("purplestone.png")?;
+        let greystone = Texture::new("greystone.png")?;
+        let bluestone = Texture::new("bluestone.png")?;
+        let mossy = Texture::new("mossy.png")?;
+        let wood = Texture::new("wood.png")?;
+        let colorstone = Texture::new("colorstone.png")?;
 
-        self.textures.push(wall_texture);
-        self.textures.push(floor_texture);
-        self.textures.push(ceiling_texture);
+        self.textures.push(eagle);
+        self.textures.push(redbrick);
+        self.textures.push(purplestone);
+        self.textures.push(greystone);
+        self.textures.push(bluestone);
+        self.textures.push(mossy);
+        self.textures.push(wood);
+        self.textures.push(colorstone);
 
         Ok(())
     }

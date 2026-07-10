@@ -65,15 +65,16 @@ impl Camera {
 
     fn try_move(&mut self, new_pos_x: f64, new_pos_y: f64, world: &World) {
         let r = self.radius;
+        let front = self.get_front();
 
-        if !world.is_wall(Point2::new(new_pos_x + r, self.position.y))
-            && !world.is_wall(Point2::new(new_pos_x - r, self.position.y))
+        if (front.x > 0.0 && !world.is_wall(Point2::new(new_pos_x + r, self.position.y)))
+            || (front.x < 0.0 && !world.is_wall(Point2::new(new_pos_x - r, self.position.y)))
         {
             self.position.x = new_pos_x;
         }
 
-        if !world.is_wall(Point2::new(self.position.x, new_pos_y + r))
-            && !world.is_wall(Point2::new(self.position.x, new_pos_y - r))
+        if (front.y > 0.0 && !world.is_wall(Point2::new(self.position.x, new_pos_y + r)))
+            || (front.y < 0.0 && !world.is_wall(Point2::new(self.position.x, new_pos_y - r)))
         {
             self.position.y = new_pos_y;
         }

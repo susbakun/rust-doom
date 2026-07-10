@@ -5,6 +5,7 @@ use image::{ImageReader, imageops::FilterType};
 
 use crate::prelude::{TEX_HEIGHT, TEX_WIDTH};
 
+#[derive(PartialEq)]
 pub struct Texture {
     pub colors: Vec<u8>,
 }
@@ -22,3 +23,5 @@ impl Texture {
         Ok(Texture { colors })
     }
 }
+
+pub type TexturedId = usize;

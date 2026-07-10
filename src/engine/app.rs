@@ -7,7 +7,7 @@ use crate::{
     camera::Camera,
     engine::window::GameWindow,
     math::Point2,
-    prelude::{MAP, MOVEMENT_SPEED, ROTATION_SPEED},
+    prelude::{MOVEMENT_SPEED, ROTATION_SPEED, WORLD_MAP},
     world::World,
 };
 
@@ -24,12 +24,12 @@ impl<'a> Engine<'a> {
             Point2::new(4.5, 3.5), // initial position
             MOVEMENT_SPEED,
             PI / 2.0, // looking at +Y,
-            1.0,
+            0.8,      // radius
             ROTATION_SPEED,
         );
         let game_window = GameWindow::new()?;
 
-        let world = World::new(MAP);
+        let world = World::new(&WORLD_MAP);
         let mut asset_manager = AssetManager::new();
         asset_manager.load_assets()?;
 

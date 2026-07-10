@@ -5,37 +5,30 @@ mod tile;
 use crate::{
     hitrecord::{HitRecord, Side},
     math::Point2,
+    prelude::{MAP_HEIGHT, MAP_WIDTH},
     ray::Ray,
-    world::tile::Tile,
+    texture::TexturedId,
+    world::tile::Tile::{self, Empty, Wall},
 };
 
 pub struct World {
     map: Vec<Vec<Tile>>,
-    width: usize,
-    height: usize,
 }
 
 impl World {
-    pub fn new(map: &str) -> Self {
-        let width = map.lines().next().map(|l| l.len()).unwrap_or(0);
-        let height = map.lines().count();
-
+    pub fn new(map: &[[i32; MAP_WIDTH]; MAP_HEIGHT]) -> Self {
         let mut world_map = vec![];
 
-        for line in map.lines() {
+        for row in map {
             let mut items = vec![];
-            for item in line.chars() {
-                let tile = item.into();
-                items.push(tile);
+            for column in row {
+                let item = Tile::new(*column as usize);
+                items.push(item);
             }
             world_map.push(items);
         }
 
-        Self {
-            map: world_map,
-            width,
-            height,
-        }
+        Self { map: world_map }
     }
 
     pub fn hit(&self, ray: &Ray, rec: &mut HitRecord) -> bool {
@@ -83,6 +76,8 @@ impl World {
                     Side::Y => side_dist_y - delta_dist_y,
                 };
 
+                rec.texture_id = self.get_texture(point);
+
                 return true;
             }
 
@@ -99,12 +94,22 @@ impl World {
     }
 
     fn in_range(&self, point: Point2) -> bool {
-        (point.x >= 0.0 && point.x < self.width as f64)
-            && (point.y >= 0.0 && point.y < self.height as f64)
+        (point.x >= 0.0 && point.x < MAP_WIDTH as f64)
+            && (point.y >= 0.0 && point.y < MAP_HEIGHT as f64)
     }
 
     pub fn is_wall(&self, point: Point2) -> bool {
         let (x, y) = (point.x as usize, point.y as usize);
-        self.map[y][x] == Tile::Wall
+
+        matches!(self.map[y][x], Tile::Wall(_))
+    }
+
+    fn get_texture(&self, point: Point2) -> TexturedId {
+        let (x, y) = (point.x as usize, point.y as usize);
+
+        match self.map[y][x] {
+            Wall(textured_id) => textured_id,
+            Empty => 0,
+        }
     }
 }

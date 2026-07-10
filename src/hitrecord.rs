@@ -1,4 +1,4 @@
-use crate::math::Point2;
+use crate::{math::Point2, texture::TexturedId};
 
 #[derive(Default, PartialEq)]
 pub enum Side {
@@ -12,6 +12,7 @@ pub struct HitRecord {
     pub pos: Point2,
     pub ray_distance: f64,
     pub side: Side,
+    pub texture_id: TexturedId,
 }
 
 impl HitRecord {
@@ -20,6 +21,7 @@ impl HitRecord {
             pos,
             ray_distance,
             side: Side::X,
+            texture_id: 0,
         }
     }
 }

@@ -4,7 +4,7 @@ use crate::{
     color::Color,
     hitrecord::{HitRecord, Side},
     math::Vec2,
-    prelude::{HEIGHT, TEX_HEIGHT, TEX_WIDTH, WIDTH},
+    prelude::{CEILING_TEXTUREID, FLOOR_TEXTUREID, HEIGHT, TEX_HEIGHT, TEX_WIDTH, WIDTH},
     ray::Ray,
     world::World,
 };
@@ -13,9 +13,8 @@ pub fn render(world: &World, camera: &Camera, asset_manager: &AssetManager, fram
     let dir = camera.get_front();
     let plane = Vec2::new(-dir.y, dir.x) * 0.66;
 
-    let wall_texture = &asset_manager.textures[0];
-    let floor_texture = &asset_manager.textures[1];
-    let ceiling_texture = &asset_manager.textures[2];
+    let floor_texture = &asset_manager.textures[FLOOR_TEXTUREID];
+    let ceiling_texture = &asset_manager.textures[CEILING_TEXTUREID];
 
     let ray_dir_x_0 = dir.x - plane.x;
     let ray_dir_y_0 = dir.y - plane.y;
@@ -79,7 +78,7 @@ pub fn render(world: &World, camera: &Camera, asset_manager: &AssetManager, fram
             let draw_start = ((HEIGHT as i32 - wall_height) / 2).max(0) as u32;
             let draw_end = ((HEIGHT as i32 + wall_height) / 2).min(HEIGHT as i32) as u32;
 
-            // finding texture coordinates
+            // preparing texture data
             let mut wallx = match rec.side {
                 Side::X => ray.origin().y + perp_dist * ray_dir.y,
                 Side::Y => ray.origin().x + perp_dist * ray_dir.x,
@@ -97,6 +96,8 @@ pub fn render(world: &World, camera: &Camera, asset_manager: &AssetManager, fram
 
             let step = 1.0 * TEX_HEIGHT as f64 / wall_height as f64;
             let mut tex_pos = 0.0;
+
+            let wall_texture = &asset_manager.textures[rec.texture_id];
 
             for y in draw_start..draw_end {
                 let tex_y = tex_pos as usize;
