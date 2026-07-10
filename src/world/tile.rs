@@ -1,8 +1,8 @@
-use crate::texture::TexturedId;
+use crate::texture::TextureId;
 
 #[derive(PartialEq)]
 pub enum Tile {
-    Wall(TexturedId),
+    Wall(TextureId),
     Empty,
 }
 

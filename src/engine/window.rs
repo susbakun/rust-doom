@@ -55,7 +55,7 @@ impl<'a> GameWindow<'a> {
     pub fn run_event_loop(
         &mut self,
         camera: &mut Camera,
-        world: &World,
+        world: &mut World,
         asset_manager: &AssetManager,
     ) -> Result<()> {
         let mut input = WinitInputHelper::new();
@@ -78,7 +78,7 @@ impl<'a> GameWindow<'a> {
                         timer.register_frame();
 
                         let frame = self.pixels.frame_mut();
-                        render(&world, camera, &asset_manager, frame);
+                        render(world, camera, &asset_manager, frame);
                         match self.pixels.render() {
                             Err(err) => panic!("failed to render scene: {err}"),
                             _ => (),
@@ -102,14 +102,14 @@ impl<'a> GameWindow<'a> {
 
                         // camera movements
                         if input.key_held(KeyCode::KeyW) {
-                            camera.move_forward(dt, &world);
+                            camera.move_forward(dt, world);
                         }
                         if input.key_held(KeyCode::KeyS) {
-                            camera.move_backward(dt, &world);
+                            camera.move_backward(dt, world);
                         }
                         if input.key_held(KeyCode::KeyA) {
                             if input.held_alt() {
-                                camera.strafe_left(dt, &world);
+                                camera.strafe_left(dt, world);
                             } else {
                                 camera.turn_left(dt);
                             }

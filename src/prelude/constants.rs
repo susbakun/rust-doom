@@ -1,3 +1,5 @@
+use crate::{math::Point2, world::sprite::Sprite};
+
 // window
 pub const WIDTH: u32 = 800;
 pub const HEIGHT: u32 = 600;
@@ -91,3 +93,29 @@ pub const TEX_WIDTH: usize = 64;
 pub const TEX_HEIGHT: usize = 64;
 pub const FLOOR_TEXTUREID: usize = 3;
 pub const CEILING_TEXTUREID: usize = 6;
+
+// sprites
+pub const SPRITES: [Sprite; 19] = [
+    Sprite::new(Point2::new(20.5, 11.5), 10),
+    // Green lights
+    Sprite::new(Point2::new(18.5, 4.5), 10),
+    Sprite::new(Point2::new(10.0, 4.5), 10),
+    Sprite::new(Point2::new(10.0, 12.5), 10),
+    Sprite::new(Point2::new(3.5, 6.5), 10),
+    Sprite::new(Point2::new(3.5, 20.5), 10),
+    Sprite::new(Point2::new(3.5, 14.5), 10),
+    Sprite::new(Point2::new(14.5, 20.5), 10),
+    // Pillars
+    Sprite::new(Point2::new(18.5, 10.5), 9),
+    Sprite::new(Point2::new(18.5, 11.5), 9),
+    Sprite::new(Point2::new(18.5, 12.5), 9),
+    // Barrels
+    Sprite::new(Point2::new(21.5, 1.5), 8),
+    Sprite::new(Point2::new(15.5, 1.5), 8),
+    Sprite::new(Point2::new(16.0, 1.8), 8),
+    Sprite::new(Point2::new(16.2, 1.2), 8),
+    Sprite::new(Point2::new(3.5, 2.5), 8),
+    Sprite::new(Point2::new(9.5, 15.5), 8),
+    Sprite::new(Point2::new(10.0, 15.1), 8),
+    Sprite::new(Point2::new(10.5, 15.8), 8),
+];

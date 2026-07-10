@@ -43,6 +43,6 @@ impl<'a> Engine<'a> {
 
     pub fn run(&mut self) -> Result<()> {
         self.game_window
-            .run_event_loop(&mut self.camera, &self.world, &self.asset_manager)
+            .run_event_loop(&mut self.camera, &mut self.world, &self.asset_manager)
     }
 }

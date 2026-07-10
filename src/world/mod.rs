@@ -1,18 +1,38 @@
-use std::f64::INFINITY;
+use std::{cmp::Ordering, f64::INFINITY};
 
+pub mod sprite;
 mod tile;
 
 use crate::{
     hitrecord::{HitRecord, Side},
     math::Point2,
-    prelude::{MAP_HEIGHT, MAP_WIDTH},
+    prelude::{MAP_HEIGHT, MAP_WIDTH, SPRITES, WIDTH},
     ray::Ray,
-    texture::TexturedId,
-    world::tile::Tile::{self, Empty, Wall},
+    texture::TextureId,
+    world::{
+        sprite::Sprite,
+        tile::Tile::{self, Empty, Wall},
+    },
 };
+
+pub struct SpriteData {
+    pub sprite: Sprite,
+    pub distance: f64,
+}
+
+impl SpriteData {
+    fn new(sprite: Sprite) -> Self {
+        Self {
+            sprite,
+            distance: 0.0,
+        }
+    }
+}
 
 pub struct World {
     map: Vec<Vec<Tile>>,
+    pub sprites: Vec<SpriteData>,
+    pub z_buffer: Vec<f64>,
 }
 
 impl World {
@@ -28,7 +48,15 @@ impl World {
             world_map.push(items);
         }
 
-        Self { map: world_map }
+        let sprites = SPRITES.to_vec().into_iter().map(SpriteData::new).collect();
+
+        let z_buffer = vec![0.0; WIDTH as usize];
+
+        Self {
+            map: world_map,
+            sprites,
+            z_buffer,
+        }
     }
 
     pub fn hit(&self, ray: &Ray, rec: &mut HitRecord) -> bool {
@@ -104,12 +132,20 @@ impl World {
         matches!(self.map[y][x], Tile::Wall(_))
     }
 
-    fn get_texture(&self, point: Point2) -> TexturedId {
+    fn get_texture(&self, point: Point2) -> TextureId {
         let (x, y) = (point.x as usize, point.y as usize);
 
         match self.map[y][x] {
             Wall(textured_id) => textured_id,
             Empty => 0,
         }
+    }
+
+    pub fn sort(&mut self) {
+        self.sprites.sort_by(Self::sort_by_distance);
+    }
+
+    fn sort_by_distance(sprite1: &SpriteData, sprite2: &SpriteData) -> Ordering {
+        sprite2.distance.total_cmp(&sprite1.distance)
     }
 }

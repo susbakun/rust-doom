@@ -24,4 +24,4 @@ impl Texture {
     }
 }
 
-pub type TexturedId = usize;
+pub type TextureId = usize;
