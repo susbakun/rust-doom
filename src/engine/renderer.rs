@@ -148,12 +148,11 @@ pub fn render(world: &mut World, camera: &Camera, asset_manager: &AssetManager, 
         //calculate width of the sprite
         let sprite_width = (HEIGHT as f64 / transform_y).abs().floor() as isize;
         let draw_start_x = (-sprite_width / 2 + sprite_screen_x).max(0);
-        let draw_end_x = (sprite_width / 2 + sprite_screen_x).min(WIDTH as isize - 1);
+        let draw_end_x = (sprite_width / 2 + sprite_screen_x).min(sprite_screen_x - 1);
 
         for x in draw_start_x..draw_end_x {
-            let tex_x = ((256 * (x - (-sprite_width / 2 + sprite_screen_x)) * TEX_WIDTH as isize
-                / sprite_width)
-                / 256) as usize;
+            let tex_x = ((x - (-sprite_width / 2 + sprite_screen_x)) * TEX_WIDTH as isize
+                / sprite_width) as usize;
 
             if transform_y > 0.0
                 && x > 0
@@ -161,9 +160,9 @@ pub fn render(world: &mut World, camera: &Camera, asset_manager: &AssetManager, 
                 && transform_y < world.z_buffer[x as usize]
             {
                 for y in draw_start_y..draw_end_y {
-                    let d = y as isize * 256 - HEIGHT as isize * 128 + sprite_height as isize * 128;
+                    let d = y as isize - HEIGHT as isize + sprite_height as isize;
 
-                    let tex_y = ((d * TEX_HEIGHT as isize) / sprite_height as isize / 256) as usize;
+                    let tex_y = ((d * TEX_HEIGHT as isize) / sprite_height as isize) as usize;
 
                     let tex_index = ((TEX_WIDTH * tex_y) + tex_x) * 4;
 
